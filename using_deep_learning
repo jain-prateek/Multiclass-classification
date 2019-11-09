@@ -1,0 +1,34 @@
+from keras.models import Sequential
+from keras.layers import Dense, Embedding, LSTM, GRU
+from keras.layers.embeddings import Embedding
+
+EMBEDDING_DIM = 100
+
+PRINT('Build model....')
+
+model = Sequential()
+model.add(Embedding(vovab_size, EMBEDDING_DIM, input_length=max_length))
+model.add(GRU(units=32, dropout=0.2, recurrent_dropout=0.2))
+model.add(Dense(num_labels, activation='softmax'))
+
+#try using diff optimizers and diff optimizer configs
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+print('Summary of the built model....')
+print(model.summary())
+
+#Train model
+num_epochs=10
+batch_size=128
+
+history= model.fir(x_train, y_train,batch_size=batch_size,epochs=num_epochs,verbose=2,validation_split=0.2)
+
+#Evaluate model
+score,acc = model.evaluate(x_test,y_test,batch_size=batch_size,verbose=2)
+
+## LSTM vs GRU
+#From my experience, GRUs train faster and perform better than LSTMs on less training data if you are doing language modeling (not sure about other tasks).
+
+#GRUs are simpler and thus easier to modify, for example adding new gates in case of additional input to the network. It's just less code in general.
+
+#LSTMs should in theory remember longer sequences than GRUs and outperform them in tasks requiring modeling long-distance relations.
